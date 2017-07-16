@@ -1,21 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.IO;
 using UnityEngine;
-using System.Globalization;
+
 
 namespace DataManagement
 {
-    public class Entity
+    abstract public class Entity
     {
         private string entityName;
         private string entityDescription;
-        protected XmlDocument xmlDatabase;
+        
         protected bool IsItemExist = false;
 
         public string EntityName
@@ -118,7 +115,7 @@ namespace DataManagement
                 {
                     currentHP = 0;
                     isAlive = false;
-                    this.isDead();
+                    this.IsDead();
                 }
             }
         }
@@ -155,7 +152,7 @@ namespace DataManagement
             }
         }
 
-        public virtual void isDead() { }
+        public virtual void IsDead() { }
 
         public virtual string GetInfo()
         {
@@ -208,14 +205,15 @@ namespace DataManagement
         {
             try
             {
-                this.xmlDatabase = new XmlDocument();
-                this.xmlDatabase.Load(xmlPath);
+                XmlDocument xmlDatabase = new XmlDocument();
+                xmlDatabase.Load(xmlPath);
 
-                foreach (XmlNode Node in this.xmlDatabase.DocumentElement)
+                foreach (XmlNode Node in xmlDatabase.DocumentElement)
                 {
                     if (Node.Attributes[0].Value == name)
                     {
                         this.IsItemExist = true;
+
                         this.EntityName = Node.Attributes[0].Value;
                         this.Value = int.Parse(Node["Value"].InnerText);
                         this.Duration = int.Parse(Node["Duration"].InnerText);
@@ -272,10 +270,11 @@ namespace DataManagement
             try
             {
                 activeSkill = new List<ActiveSkill>();
-                this.xmlDatabase = new XmlDocument();
-                this.xmlDatabase.Load(xmlPath);
 
-                foreach (XmlNode Node in this.xmlDatabase.DocumentElement)
+                XmlDocument xmlDatabase = new XmlDocument();
+                xmlDatabase.Load(xmlPath);
+
+                foreach (XmlNode Node in xmlDatabase.DocumentElement)
                 {
                     if (Node.Attributes[0].Value == name)
                     {
@@ -375,10 +374,10 @@ namespace DataManagement
 
             try
             {
-                this.xmlDatabase = new XmlDocument();
-                this.xmlDatabase.Load(xmlPath);
+                XmlDocument xmlDatabase = new XmlDocument();
+                xmlDatabase.Load(xmlPath);
 
-                foreach (XmlNode Node in this.xmlDatabase.DocumentElement)
+                foreach (XmlNode Node in xmlDatabase.DocumentElement)
                 {
                     if (Node.Attributes[0].Value == name)
                     {
@@ -430,10 +429,10 @@ namespace DataManagement
 
             try
             {
-                this.xmlDatabase = new XmlDocument();
-                this.xmlDatabase.Load(xmlPath);
+                XmlDocument xmlDatabase = new XmlDocument();
+                xmlDatabase.Load(xmlPath);
 
-                foreach (XmlNode Node in this.xmlDatabase.DocumentElement)
+                foreach (XmlNode Node in xmlDatabase.DocumentElement)
                 {
                     if (Node.Attributes[0].Value == name)
                     {
@@ -952,13 +951,14 @@ namespace DataManagement
         {
             try
             {
-                this.xmlDatabase = new XmlDocument();
-                this.xmlDatabase.Load(xmlPath);
+                XmlDocument xmlDatabase = new XmlDocument();
+                xmlDatabase.Load(xmlPath);
+
                 string characterName = "";
                 bool isntNewCharacter = xmlDatabase.SelectSingleNode("//Class") == null;
                 bool nodeCondition = true;
 
-                foreach (XmlNode Node in this.xmlDatabase.DocumentElement)
+                foreach (XmlNode Node in xmlDatabase.DocumentElement)
                 {
                     if (!isntNewCharacter)
                     {
@@ -1014,6 +1014,7 @@ namespace DataManagement
                         this.CurrentHP = int.Parse(Node["CurrentHP"].InnerText);
                         this.CurrentMP = int.Parse(Node["CurrentMP"].InnerText);
                         this.CurrentArmor = int.Parse(Node["CurrentArmor"].InnerText);
+
                         break;
                     }
                 }
@@ -1064,7 +1065,7 @@ namespace DataManagement
             return info.ToString();
         }
 
-        private void createSaveFile(string playername, string chosenClassName)
+        private void CreateSaveFile(string playername, string chosenClassName)
         {           
             using (XmlTextWriter textWritter = new XmlTextWriter(string.Format("Assets\\XmlFiles\\SaveFiles\\{0}CharacterSaveFile.xml", playername), Encoding.UTF8))
             {
@@ -1094,49 +1095,49 @@ namespace DataManagement
                 PlyName.Value = playername;
                 characterData.Attributes.Append(PlyName);
                 
-                addNodeToXml(xmlSaveFile, characterData, "Class", chosenClassName);
-                addNodeToXml(xmlSaveFile, characterData, "EntityDescription", this.EntityDescription);
+                AddNodeToXml(xmlSaveFile, characterData, "Class", chosenClassName);
+                AddNodeToXml(xmlSaveFile, characterData, "EntityDescription", this.EntityDescription);
 
-                addNodeToXml(xmlSaveFile, characterData, "MaxHP", this.MaxHP.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "MaxMP", this.MaxMP.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "MaxArmor", this.MaxArmor.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "MaxHP", this.MaxHP.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "MaxMP", this.MaxMP.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "MaxArmor", this.MaxArmor.ToString());
 
-                addNodeToXml(xmlSaveFile, characterData, "Toughness", this.Toughness.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Resolution", this.Resolution.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Imagination", this.Imagination.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Vigor", this.Vigor.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Investigation", this.Investigation.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Agility", this.Agility.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Luck", this.Luck.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Toughness", this.Toughness.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Resolution", this.Resolution.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Imagination", this.Imagination.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Vigor", this.Vigor.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Investigation", this.Investigation.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Agility", this.Agility.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Luck", this.Luck.ToString());
 
-                addNodeToXml(xmlSaveFile, characterData, "Initiative", this.Initiative.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "MaxNewActionsPerTurn", this.MaxNewActionsPerTurn.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "PhysicalDamage", this.PhysicalDamage.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "LightningDamage", this.LightningDamage.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "IceDamage", this.IceDamage.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "FireDamage", this.FireDamage.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "PhysicalDefense", this.PhysicalDefense.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "LightningDefense", this.LightningDefense.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "IceDefense", this.IceDefense.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "FireDefense", this.FireDefense.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "CriticalHitChance", this.CriticalHitChance.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "CriticalHitDamage", this.CriticalHitDamage.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Initiative", this.Initiative.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "MaxNewActionsPerTurn", this.MaxNewActionsPerTurn.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "PhysicalDamage", this.PhysicalDamage.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "LightningDamage", this.LightningDamage.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "IceDamage", this.IceDamage.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "FireDamage", this.FireDamage.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "PhysicalDefense", this.PhysicalDefense.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "LightningDefense", this.LightningDefense.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "IceDefense", this.IceDefense.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "FireDefense", this.FireDefense.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "CriticalHitChance", this.CriticalHitChance.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "CriticalHitDamage", this.CriticalHitDamage.ToString());
 
-                addNodeToXml(xmlSaveFile, characterData, "Gold", this.Gold.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Score", this.Score.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "BestScore", this.BestScore.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Level", this.Level.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "Expirience", this.Expirience.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Gold", this.Gold.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Score", this.Score.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "BestScore", this.BestScore.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Level", this.Level.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "Expirience", this.Expirience.ToString());
 
-                addNodeToXml(xmlSaveFile, characterData, "CurrentHP", this.CurrentHP.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "CurrentMP", this.CurrentMP.ToString());
-                addNodeToXml(xmlSaveFile, characterData, "CurrentArmor", this.CurrentArmor.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "CurrentHP", this.CurrentHP.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "CurrentMP", this.CurrentMP.ToString());
+                AddNodeToXml(xmlSaveFile, characterData, "CurrentArmor", this.CurrentArmor.ToString());
 
                 xmlSaveFile.Save(string.Format("Assets\\XmlFiles\\SaveFiles\\{0}CharacterSaveFile.xml", playername));
             }
         }
 
-        private void addNodeToXml(XmlDocument xmlDatabase, XmlNode mainNode, string nodeName, string nodeValue)
+        private void AddNodeToXml(XmlDocument xmlDatabase, XmlNode mainNode, string nodeName, string nodeValue)
         {
             XmlNode newNode = xmlDatabase.CreateElement(nodeName);
             newNode.InnerText = nodeValue;
@@ -1147,7 +1148,7 @@ namespace DataManagement
         {
             if (!File.Exists(string.Format("Assets\\XmlFiles\\SaveFiles\\{0}CharacterSaveFile.xml", name)))
             {
-                createSaveFile(name, className);
+                CreateSaveFile(name, className);
             }
             else
             {

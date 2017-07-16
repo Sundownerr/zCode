@@ -1,12 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Xml;
-using System.IO;
 using UnityEngine;
+using DataManagement;
 
 namespace MapMechanics
 {
@@ -26,9 +22,8 @@ namespace MapMechanics
     //    public static Random Instance { get { return threadLocal.Value; } }
     //}
 
-    public class MapData
-    {
-        private string mapName;
+    public class MapData : Entity
+    {       
         private int levelCount, roomsCount, bossCount;
         private List<string> roots = new List<string>();
         private List<string> prefixes = new List<string>();
@@ -67,7 +62,7 @@ namespace MapMechanics
                 string root = roots[new System.Random().Next(0, roots.Count)];
                 string postfix = " " + postfixes[new System.Random().Next(0, postfixes.Count)];
 
-                mapName = prefix + root + postfix;
+                this.EntityName = prefix + root + postfix;
             }
             catch (Exception ex)
             {
@@ -224,12 +219,12 @@ namespace MapMechanics
             for (var i = 0; i < roomsPerLevel.Count; i++)
                 sumRoomsCount += roomsPerLevel[i];
 
-            return string.Format("Map name: {0}, Levels = {1}, Rooms = {2} ", mapName, levelCount, sumRoomsCount);
+            return string.Format("Map name: {0}, Levels = {1}, Rooms = {2} ", this.EntityName, levelCount, sumRoomsCount);
         }
 
         public MapData(int playerLevel)
         {
-            this.GenerateMapName("Assets\\XmlFiles\\MapNames.xml");
+            this.GenerateMapName("Assets\\XmlFiles\\this.EntityNames.xml");
             this.GenerateLevelsAndRooms(playerLevel);
             Debug.Log("\r\n" + this.GetInfo());
         }
