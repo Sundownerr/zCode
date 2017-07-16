@@ -224,7 +224,7 @@ namespace MapMechanics
 
         public MapData(int playerLevel)
         {
-            this.GenerateMapName("Assets\\XmlFiles\\this.EntityNames.xml");
+            this.GenerateMapName("Assets\\XmlFiles\\MapNames.xml");
             this.GenerateLevelsAndRooms(playerLevel);
             Debug.Log("\r\n" + this.GetInfo());
         }
