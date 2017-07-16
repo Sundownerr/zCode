@@ -259,3 +259,28 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Assets/Fonts
+/Assets/Fonts/IMMORTAL.ttf
+/Assets/Prefabs
+/Assets/Scenes
+
+
+
+/Assets/UnityVS/Editor
+/Assets/Textures
+/Assets/Standard Assets
+/test_Data
+/test2_Data
+/Temp
+/ProjectSettings
+/Library
+/Zlodeiskiy_N.sln
+/Zlodeiskiy_N.Plugins.csproj
+/Zlodeiskiy_N.csproj
+/Zlodeiskiy_N.CSharp.Plugins.csproj
+/Zlodeiskiy_N.CSharp.csproj
+/test2.exe
+/Assets/XmlFiles
+/test2.exe
+/Class1.cs
+/test_Data/Managed
