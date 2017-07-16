@@ -9,9 +9,8 @@ namespace ItemSystem
 {
     public class Bonus : Entity
     {
-        private int bonusLevel;
-        
-        public List<int> bonusValue = new List<int>();                       
+        private int bonusLevel;      
+        private List<int> bonusValue = new List<int>();                       
         
         public int BonusLevel
         {
@@ -43,7 +42,6 @@ namespace ItemSystem
                 }
             }
         }
-
         
         public virtual string GetInfo()
         {
@@ -57,123 +55,119 @@ namespace ItemSystem
             return string.Format("Bonus name: {0}, Description: {1}, Level = {2}, Values: {3} \r\n", this.EntityName, this.EntityDescription, bonusLevel, tempString.ToString());
         }
 
-        protected void LoadBonuses(string xmlPath, string bonusType, int bonusLevel, List<Bonus> bonusPrefix, List<Bonus> bonusPostfix)
+        protected Bonus LoadBonus(string xmlPath, string bonusPrefixOrPostfix, string bonusType, int bonusLevel)
         {
-            if (bonusType == "Weapon" | bonusType == "Armor" | bonusType == "Accesory")
+            if (bonusPrefixOrPostfix == "Prefix" | bonusPrefixOrPostfix == "Postfix")
             {
-                string[] separator = { "HP", "MP", ",", " ", "+", "%", "Damage", "Defense", "Physical", "damage" };
-                int bonusModified = 0;
-
-                try
+                if (bonusType == "Weapon" | bonusType == "Armor" | bonusType == "Accesory")
                 {
-                    XmlDocument xmlDatabase = new XmlDocument();
-                    xmlDatabase.Load(xmlPath);
-
-                    XmlNodeList xmlNodeList = xmlDatabase.SelectNodes(string.Format(".//{0}PrefixBonus/Bonus", bonusType));
-                    System.Random rand = new System.Random();
-
-                    foreach (XmlNode Node in xmlNodeList)
+                    try
                     {
-                        int index = bonusPrefix.Count;                       
-
-                        bonusPrefix.Add(new Bonus());
-                        bonusPrefix[index].EntityName = Node.Attributes[0].Value;
-                        bonusPrefix[index].EntityDescription = Node["this.EntityDescription"].InnerText;
-
-                        string[] tempStr = bonusPrefix[index].EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
-                        for (int i = 0; i < tempStr.Length; i++)
-                        {
-                            bonusPrefix[index].BonusValue.Add(int.Parse(tempStr[i]));
-                            bonusModified = bonusPrefix[index].BonusValue[i] * rand.Next(0, bonusLevel);
-                            bonusPrefix[index].BonusValue[i] = bonusModified;
-                            bonusPrefix[index].EntityDescription = bonusPrefix[index].EntityDescription.Replace(tempStr[i], bonusModified.ToString());
-
-                            Console.WriteLine(bonusModified);
-                        }
-
-                        Console.WriteLine(bonusPrefix[index].EntityName + " " + bonusPrefix[index].EntityDescription + ", Values: " + bonusPrefix[index].BonusValue.Count);
-                    }
-
-                    xmlNodeList = xmlDatabase.SelectNodes(string.Format(".//{0}PostfixBonus/Bonus", bonusType));
-
-                    foreach (XmlNode Node in xmlNodeList)
-                    {
-                        int index = bonusPostfix.Count;
                         
-                        bonusPostfix.Add(new Bonus());
-                        bonusPostfix[index].EntityName = Node.Attributes[0].Value;
-                        bonusPostfix[index].EntityDescription = Node["this.EntityDescription"].InnerText;
+                        int bonusModified = 0;
+                        int chosenBonus = 0;
+                        List<Bonus> bonuses = new List<Bonus>();                       
+                        string[] separator = { "HP", "MP", ",", " ", "+", "%", "Damage", "Defense", "Physical", "damage" };
 
-                        string[] tempStr = bonusPostfix[index].EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                        XmlDocument xmlDatabase = new XmlDocument();
+                        xmlDatabase.Load(xmlPath);
 
-                        for (int i = 0; i < tempStr.Length; i++)
+                        XmlNodeList xmlNodeList = xmlDatabase.SelectNodes(string.Format(".//{0}{1}Bonus/Bonus", bonusType, bonusPrefixOrPostfix));
+
+                        foreach (XmlNode Node in xmlNodeList)
                         {
-                            bonusPostfix[index].BonusValue.Add(int.Parse(tempStr[i]));
-                            bonusModified = bonusPostfix[index].BonusValue[i] * rand.Next(0, bonusLevel);
-                            bonusPostfix[index].BonusValue[i] = bonusModified;
-                            bonusPostfix[index].EntityDescription = bonusPostfix[index].EntityDescription.Replace(tempStr[i], bonusModified.ToString());
+                            int index = bonuses.Count;
 
-                            Console.WriteLine(bonusModified);
+                            bonuses.Add(new Bonus());
+                            bonuses[index].EntityName = Node.Attributes[0].Value;
+                            bonuses[index].EntityDescription = Node["BonusDescription"].InnerText;
+
+                            string[] tempStr = bonuses[index].EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+                            for (int i = 0; i < tempStr.Length; i++)
+                            {
+                                bonuses[index].BonusValue.Add(int.Parse(tempStr[i]));
+                                bonusModified = bonuses[index].BonusValue[i] * UnityEngine.Random.Range(0, bonusLevel) + 1;
+                                bonuses[index].BonusValue[i] = bonusModified;
+                                bonuses[index].EntityDescription = bonuses[index].EntityDescription.Replace(tempStr[i], bonusModified.ToString()); 
+                            }
                         }
 
-                        Console.WriteLine(bonusPostfix[index].EntityName + " " + bonusPostfix[index].EntityDescription + ", Values: " + bonusPostfix[index].BonusValue.Count);
+                        chosenBonus = UnityEngine.Random.Range(-1, bonuses.Count);
+
+                        if (chosenBonus > 0)
+                        {
+                            return bonuses[chosenBonus];
+                        }
+                        else
+                        {
+                            return null;
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.Log("Error: " + ex);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("Error" + ex);
-                    // throw new Exception(ex.Message);
-                }
+                    Debug.Log("No such bonus type: " + bonusType);
+                    return null;
+                }             
             }
             else
             {
-                throw new Exception("No such bonus type: " + bonusType);
+                Debug.Log("No such bonus type: " + bonusType);
+                return null;
+            }
+
+            return null;
+        }
+        
+        protected void GenerateBonus(string xmlPath, string bonusPrefixOrPostfix, string bonusType, int bonusLevel)
+        {
+            Bonus bonus = LoadBonus(xmlPath, bonusPrefixOrPostfix, bonusType, bonusLevel);
+
+            if (bonus != null)
+            {
+                this.EntityName = bonus.EntityName;
+                this.EntityDescription = bonus.EntityDescription;
+                this.BonusLevel = bonusLevel;
+                this.BonusValue = bonus.BonusValue;
             }
         }
     }
 
     public class ArmorBonus : Bonus
     {
-        public List<Bonus> bonusArmorPrefix = new List<Bonus>();
-        private List<Bonus> bonusArmorPostfix = new List<Bonus>();
-
-        public ArmorBonus() 
+        public ArmorBonus(int bonusLevel) 
         {
-            LoadBonuses("ItemBonuses.xml", "Armor", 500, bonusArmorPrefix, bonusArmorPostfix);           
+            GenerateBonus("Assets//XmlFiles//ItemBonuses.xml", "Prefix", "Armor", bonusLevel);       
         }
     }
 
     public class WeaponBonus : Bonus
     {
-        private List<Bonus> bonusWeaponPrefix = new List<Bonus>();
-        private List<Bonus> bonusWeaponPostfix = new List<Bonus>();
-
-        public WeaponBonus()
+        public WeaponBonus(int bonusLevel)
         {
-            LoadBonuses("ItemBonuses.xml", "Weapon",500, bonusWeaponPrefix, bonusWeaponPostfix);
+            GenerateBonus("Assets//XmlFiles//ItemBonuses.xml", "Prefix", "Weapon", bonusLevel);
         }
     }
 
     public class AccesoryBonus : Bonus
     {
-        private List<Bonus> bonusAccesoryPrefix = new List<Bonus>();
-        private List<Bonus> bonusAccesoryPostfix = new List<Bonus>();
-
-        public AccesoryBonus()
+        public AccesoryBonus(int bonusLevel)
         {
-            LoadBonuses("ItemBonuses.xml", "Accesory", 500, bonusAccesoryPrefix, bonusAccesoryPostfix);
+            GenerateBonus("Assets//XmlFiles//ItemBonuses.xml", "Prefix", "Accesory", bonusLevel);
         }
     }
 
-    public class Item
-    {
-        private string itemName, itemDescription;
+    public class Item : Entity
+    {      
         private int itemWeight, itemLevel, itemPrice, itemMaxDurability, itemCurrentDurability;
-        private bool isBroken;
-        protected bool isItemExist;
-        protected XmlDocument xmlDatabase;
-
+        private bool isBroken;    
+    
         public int ItemWeight
         {
             get
@@ -264,43 +258,10 @@ namespace ItemSystem
             }
         }
 
-        public string ItemName
-        {
-            get { return itemName; }
-            protected set
-            {
-                if (value == "")
-                {
-                    itemName = " - ";
-                }
-                else
-                {
-                    itemName = value;
-                }
-            }
-        }
-
-        public string ItemDescription
-        {
-            get { return itemDescription; }
-            protected set
-            {
-                if (value == "")
-                {
-                    itemDescription = " - ";
-                }
-                else
-                {
-                    itemDescription = value;
-                }
-            }
-        }
-
         protected virtual string GetItemInfo()
         {
-            return string.Format("Item name: {0}, Item description: {1} \r\n", itemName, itemDescription);
+            return string.Format("Item name: {0}, Item description: {1} \r\n", EntityName, EntityDescription);
         }
-
     }
 
     public class Armor : Item
@@ -327,15 +288,17 @@ namespace ItemSystem
         }
     }
 
-    class ItemSystem : MonoBehaviour
+    public class ItemSystem : MonoBehaviour
     {
-        static void Main(string[] args)
+        private void Start()
         {
-            ArmorBonus ar = new ArmorBonus();
-            WeaponBonus wp = new WeaponBonus();
-            AccesoryBonus acc = new AccesoryBonus();                   
+            ArmorBonus ar = new ArmorBonus(26);
+            WeaponBonus wp = new WeaponBonus(71);
+            AccesoryBonus acc = new AccesoryBonus(612);
 
-            Console.Read();
-        }
+            Debug.Log(ar.GetInfo());
+            Debug.Log(wp.GetInfo());
+            Debug.Log(acc.GetInfo());
+        }                                 
     }
 }

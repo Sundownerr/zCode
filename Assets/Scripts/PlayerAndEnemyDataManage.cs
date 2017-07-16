@@ -5,7 +5,6 @@ using System.Xml;
 using System.IO;
 using UnityEngine;
 
-
 namespace DataManagement
 {
     abstract public class Entity
