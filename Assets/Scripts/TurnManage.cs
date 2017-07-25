@@ -1,23 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Xml;
-using System.IO;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using DataManagement;
+using MapMechanics;
 
 namespace TurnMechanics
 {
     public class TurnData
     {
-        private DataManagement.Player player;
-        private List<DataManagement.Enemy> enemies;
-        private MapMechanics.MapData mapData;
-        private MapMechanics.Room roomData;
+        private Player player;
+        private List<Enemy> enemies;
+        private MapData mapData;
+        private Room roomData;
 
-        public TurnData(DataManagement.Player player, List<DataManagement.Enemy> enemies, MapMechanics.MapData mapData, MapMechanics.Room roomData)
+        public TurnData(Player player, List<Enemy> enemies, MapData mapData, Room roomData)
         {
             this.player = player;
             this.enemies = enemies;

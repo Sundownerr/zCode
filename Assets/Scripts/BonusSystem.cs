@@ -63,42 +63,60 @@ namespace BonusSystem
                 {
                     try
                     {
-
+                        string plusOrMinus = "";
                         int bonusModified = 0;
                         int chosenBonus = 0;
-                        List<Bonus> bonuses = new List<Bonus>();
+                        Bonus bonus = new Bonus();
+                        //Random rand = new Random();
+                        StringBuilder newDescription, tempReplace;
+
                         string[] separator = { "HP", "MP", "%", ",", " ", "Damage", "Defense", "Physical", "damage" };
+                        string[] separator2 = { "," };
+                        string[] separator3 = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-", ", " };
 
                         XmlDocument xmlDatabase = new XmlDocument();
                         xmlDatabase.Load(xmlPath);
 
                         XmlNodeList xmlNodeList = xmlDatabase.SelectNodes(string.Format(".//{0}{1}Bonus/Bonus", bonusType, bonusPrefixOrPostfix));
 
-                        foreach (XmlNode Node in xmlNodeList)
+                        chosenBonus = UnityEngine.Random.Range(0, xmlNodeList.Count);
+
+                        XmlNode node = xmlNodeList[chosenBonus];
+
+                        bonus.EntityName = node.Attributes[0].Value;
+                        bonus.EntityDescription = node["BonusDescription"].InnerText;
+                        newDescription = new StringBuilder(bonus.EntityDescription, 50);
+
+                        string[] numbersToParse = bonus.EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                        string[] initialValues = bonus.EntityDescription.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
+                        string[] stat = bonus.EntityDescription.Split(separator3, StringSplitOptions.RemoveEmptyEntries);
+
+                        for (int i = 0; i < numbersToParse.Length; i++)
                         {
-                            int index = bonuses.Count;
+                            bonus.BonusValue.Add(int.Parse(numbersToParse[i]));
+                            bonusModified = bonus.BonusValue[i] * UnityEngine.Random.Range(0, bonusLevel) + 1;
+                            bonus.BonusValue[i] = bonusModified;
 
-                            bonuses.Add(new Bonus());
-                            bonuses[index].EntityName = Node.Attributes[0].Value;
-                            bonuses[index].EntityDescription = Node["BonusDescription"].InnerText;
-
-                            string[] tempStr = bonuses[index].EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
-                            for (int i = 0; i < tempStr.Length; i++)
+                            if (bonusModified >= 0)
                             {
-                                bonuses[index].BonusValue.Add(int.Parse(tempStr[i]));
-                                bonusModified = bonuses[index].BonusValue[i] * UnityEngine.Random.Range(0, bonusLevel) + 1;
-                                bonuses[index].BonusValue[i] = bonusModified;
-                                
-                                bonuses[index].EntityDescription = bonuses[index].EntityDescription.Replace(tempStr[i], bonusModified.ToString());
+                                plusOrMinus = "+";
                             }
+                            else
+                            {
+                                plusOrMinus = "";
+                            }
+
+                            tempReplace = new StringBuilder(plusOrMinus + bonusModified.ToString() + stat[i]);
+                            newDescription.Replace(initialValues[i], tempReplace.ToString());
+
+                            bonus.EntityDescription = newDescription.ToString();
                         }
 
-                        chosenBonus = UnityEngine.Random.Range(-1, bonuses.Count);
+                        int createBonus = 1;
 
-                        if (chosenBonus > 0)
+                        if (createBonus == 1)
                         {
-                            return bonuses[chosenBonus];
+                            return bonus;
                         }
                         else
                         {
@@ -108,18 +126,18 @@ namespace BonusSystem
                     }
                     catch (Exception ex)
                     {
-                        Debug.Log("Error: " + ex);
+                        Console.WriteLine("Error: " + ex);
                     }
                 }
                 else
                 {
-                    Debug.Log("No such bonus type: " + bonusType);
+                    Console.WriteLine("No such bonus type: " + bonusType);
                     return null;
                 }
             }
             else
             {
-                Debug.Log("No such bonus type: " + bonusType);
+                Console.WriteLine("No such bonus type: " + bonusType);
                 return null;
             }
 
@@ -168,9 +186,9 @@ namespace BonusSystem
     {
         private void Start()
         {
-            ArmorBonus ar = new ArmorBonus(26);
-            WeaponBonus wp = new WeaponBonus(71);
-            AccesoryBonus acc = new AccesoryBonus(612);
+            ArmorBonus ar = new ArmorBonus(UnityEngine.Random.Range(1, 1000));
+            WeaponBonus wp = new WeaponBonus(UnityEngine.Random.Range(1, 1000));
+            AccesoryBonus acc = new AccesoryBonus(UnityEngine.Random.Range(1, 1000));
 
             Debug.Log(ar.GetInfo());
             Debug.Log(wp.GetInfo());
