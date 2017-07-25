@@ -67,7 +67,6 @@ namespace BonusSystem
                         int bonusModified = 0;
                         int chosenBonus = 0;
                         Bonus bonus = new Bonus();
-                        //Random rand = new Random();
                         StringBuilder newDescription, tempReplace;
 
                         string[] separator = { "HP", "MP", "%", ",", " ", "Damage", "Defense", "Physical", "damage" };
@@ -106,7 +105,7 @@ namespace BonusSystem
                                 plusOrMinus = "";
                             }
 
-                            tempReplace = new StringBuilder(plusOrMinus + bonusModified.ToString() + stat[i]);
+                            tempReplace = new StringBuilder(" " + plusOrMinus + bonusModified.ToString() + stat[i], 50);
                             newDescription.Replace(initialValues[i], tempReplace.ToString());
 
                             bonus.EntityDescription = newDescription.ToString();
@@ -126,18 +125,18 @@ namespace BonusSystem
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Error: " + ex);
+                        Debug.Log("Error: " + ex);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("No such bonus type: " + bonusType);
+                    Debug.Log("No such bonus type: " + bonusType);
                     return null;
                 }
             }
             else
             {
-                Console.WriteLine("No such bonus type: " + bonusType);
+                Debug.Log("No such bonus type: " + bonusType);
                 return null;
             }
 

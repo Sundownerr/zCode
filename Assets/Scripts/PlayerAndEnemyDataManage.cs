@@ -476,12 +476,15 @@ namespace DataManagement
         private SkillSet skillSet;
         private List<Potion> potions;
 
+        private bool isCurrentTurn;
         private string characterName;
         private double expModifier;
         private int gold, score, level;
         private long expirience, expNeedToLvlUp;
         private int toughness, resolution, imagination, vigor, investigation, agility, luck;
         private int initiative, maxNewActionsPerTurn, physicalDamage, lightningDamage, iceDamage, fireDamage, physicalDefense, lightningDefense, iceDefense, fireDefense, criticalHitChance, criticalHitDamage;
+
+        public bool IsCurrentTurn { get; set; }
 
         public string CharacterName
         {
@@ -1174,6 +1177,9 @@ namespace DataManagement
         {
             this.LoadStats("Assets\\XmlFiles\\EnemiesStats.xml", name, "Enemy");
         }
+
+        public Enemy() { }
+
     }
 
     public class PlayerAndEnemyDataManage : MonoBehaviour
