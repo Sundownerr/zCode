@@ -8,6 +8,8 @@ namespace TurnMechanics
 {
     public class TurnData
     {
+       
+
         private Player player;
         private List<Enemy> enemies;
         private MapData mapData;
@@ -101,31 +103,56 @@ namespace TurnMechanics
     }
 
     public class TurnManage : MonoBehaviour
-    {
-        private Button[] cards = { }, temp;
-        private Button b;
+    {                 
+        private List<GameObject> cards = new List<GameObject>();
+        private Button btn;
+        private Vector3 newPos;
+        private bool cardSpawned;
+        
+
+        public GameObject Card;
+
+        private void PlaceCards()
+        {
+            for (int i = 0; i < cards.Count; i++)
+            {
+                float newPosX = -Screen.width / 3.7f + ((Screen.width / 10 - cards.Count * 5f) * i);
+                float newPosY = -Screen.height / 2f + Random.Range(0, 7);
+
+                newPos = new Vector3(newPosX, newPosY);
+
+                cards[i].GetComponent<CardsHover>().startPos = newPos;
+            }
+        }
 
         void Start()
         {
-            temp = GetComponentsInChildren<Button>();
+            cards.AddRange(GameObject.FindGameObjectsWithTag("Card"));
+            btn = GetComponentInChildren<Button>();
+            btn.onClick.AddListener(CreateCard);
 
-            for (int i = 0; i < temp.Length; i++)
+            if(cards.Count > 0)
             {
-                if(temp[i].tag == "Card")
-                {
-                    Debug.Log(temp[i].name);   
-                }
+                PlaceCards();
             }
 
-            for (int i = 0; i < cards.Length; i++)
-            {
-                Debug.Log(cards[i].name);
-            }           
+            Screen.SetResolution(1440, 900, false);
+        }
+
+        private void CreateCard()
+        {
+            GameObject newCard = Instantiate(Card, new Vector3(Screen.width, Screen.height / 2, 0), new Quaternion());
+            newCard.transform.SetParent(transform, false);
+            cards.Add(newCard);
+            
+            PlaceCards();
         }
 
         void Update()
         {
-
+            
         }
+
+       
     }
 }

@@ -67,11 +67,7 @@ namespace BonusSystem
                         int bonusModified = 0;
                         int chosenBonus = 0;
                         Bonus bonus = new Bonus();
-                        StringBuilder newDescription, tempReplace;
-
-                        string[] separator = { "HP", "MP", "%", ",", " ", "Damage", "Defense", "Physical", "damage" };
-                        string[] separator2 = { "," };
-                        string[] separator3 = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-", ", " };
+                        StringBuilder newDescription, tempReplace;                        
 
                         XmlDocument xmlDatabase = new XmlDocument();
                         xmlDatabase.Load(xmlPath);
@@ -85,6 +81,10 @@ namespace BonusSystem
                         bonus.EntityName = node.Attributes[0].Value;
                         bonus.EntityDescription = node["BonusDescription"].InnerText;
                         newDescription = new StringBuilder(bonus.EntityDescription, 50);
+
+                        string[] separator = { "HP", "MP", "%", ",", " ", "Damage", "Defense", "Physical", "damage" };
+                        string[] separator2 = { "," };
+                        string[] separator3 = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-", ", " };
 
                         string[] numbersToParse = bonus.EntityDescription.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                         string[] initialValues = bonus.EntityDescription.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
