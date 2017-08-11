@@ -9,7 +9,6 @@ namespace TurnMechanics
     public class TurnData
     {
        
-
         private Player player;
         private List<Enemy> enemies;
         private MapData mapData;
@@ -55,7 +54,7 @@ namespace TurnMechanics
             this.roomData = roomData;
         }
 
-        private void TurnStart()
+        public void TurnStart()
         {
             Enemy mostInitiativeEnemy = new Enemy();
 
@@ -86,7 +85,7 @@ namespace TurnMechanics
             }
         }
 
-        private void TurnEnd()
+        public void TurnEnd()
         {
             if(NextTurn == "Player")
             {
@@ -103,50 +102,76 @@ namespace TurnMechanics
     }
 
     public class TurnManage : MonoBehaviour
-    {                 
-        private List<GameObject> cards = new List<GameObject>();
-        private Button btn;
-        private Vector3 newPos;
-        private bool cardSpawned;
-        
+    {
+        private List<GameObject> cards;
+        private Button createCardButton;
+        private TurnData turnData;
 
-        public GameObject Card;
+        private void CreateCard()
+        {
+            int cardRand = Random.Range(0, 3);
+            string cardName;
 
-        private void PlaceCards()
+            switch (cardRand)
+            {
+                case 0:
+                    cardName = "Prefabs/testCardGray";
+                    break;
+
+                case 1:
+                    cardName = "Prefabs/testCardRed";
+                    break;
+
+                case 2:
+                    cardName = "Prefabs/testCardYellow";
+                    break;
+
+                default:
+                    Debug.Log("Error when loading card");
+                    cardName = "error";
+                    break;
+            }
+          
+            cards.Add((GameObject)Instantiate(Resources.Load(cardName),  transform));
+          
+            PlaceCard();
+        }
+
+        private void PlaceCard()
         {
             for (int i = 0; i < cards.Count; i++)
             {
-                float newPosX = -Screen.width / 3.7f + ((Screen.width / 10 - cards.Count * 5f) * i);
+                float newPosX = -Screen.width / 3.7f + (i * (Screen.width / (10f + cards.Count)));              
                 float newPosY = -Screen.height / 2f + Random.Range(0, 7);
 
-                newPos = new Vector3(newPosX, newPosY);
+                newPosX = Mathf.Clamp(newPosX, -Screen.width / 3.7f, Screen.width / 3.7f);            
 
-                cards[i].GetComponent<CardsHover>().startPos = newPos;
+                cards[i].GetComponent<CardsHover>().startPos.Set(newPosX, newPosY, -i);               
             }
         }
 
         void Start()
         {
+            Player ply = new Player("Josh", "Warrior");
+            List<Enemy> enm = new List<Enemy>() { new Enemy("Rat") };
+            MapData md = new MapData(ply.Level);
+
+            turnData = new TurnData(ply, enm, md, new Room("Empty", 0, 1));
+            turnData.TurnStart();
+
+            Screen.SetResolution(1440, 900, false);
+
+            cards = new List<GameObject>();
             cards.AddRange(GameObject.FindGameObjectsWithTag("Card"));
-            btn = GetComponentInChildren<Button>();
-            btn.onClick.AddListener(CreateCard);
+
+            createCardButton = GetComponentInChildren<Button>();
+            createCardButton.onClick.AddListener(CreateCard);
 
             if(cards.Count > 0)
             {
-                PlaceCards();
-            }
-
-            Screen.SetResolution(1440, 900, false);
-        }
-
-        private void CreateCard()
-        {
-            GameObject newCard = Instantiate(Card, new Vector3(Screen.width, Screen.height / 2, 0), new Quaternion());
-            newCard.transform.SetParent(transform, false);
-            cards.Add(newCard);
-            
-            PlaceCards();
-        }
+                PlaceCard();
+            }          
+        }      
 
         void Update()
         {

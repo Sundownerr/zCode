@@ -1,33 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.EventSystems;
 
-
-
-public class MenuManager : MonoBehaviour {
-
-    public Button StartButton, UpgradesButton, QuitButton;
-   
-    void Start () {
+public class MenuManager : MonoBehaviour
+{
+    public Button StartButton, OptionsButton, LoadButton, QuitButton;
+    
+    private void Start ()
+    {
         StartButton = StartButton.GetComponent<Button>();
-        UpgradesButton = UpgradesButton.GetComponent<Button>();
+        OptionsButton = OptionsButton.GetComponent<Button>();
+        LoadButton = LoadButton.GetComponent<Button>();
         QuitButton = QuitButton.GetComponent<Button>();
-     
+
         StartButton.onClick.AddListener(StartClick);
-        UpgradesButton.onClick.AddListener(UpgradeClick);
+        OptionsButton.onClick.AddListener(OptionsClick);
+        LoadButton.onClick.AddListener(LoadClick);
         QuitButton.onClick.AddListener(QuitClick);
 
-        Screen.SetResolution(1440, 900, false);
-        
-    }
-
-
-    void Update()
-    {
-    
+        Screen.SetResolution(1440, 900, false);    
     }
 
     private void QuitClick()
@@ -39,9 +30,15 @@ public class MenuManager : MonoBehaviour {
     {
         SceneManager.LoadScene("ClassChooseMenu");
     }
-	
-    private void UpgradeClick()
+
+    private void LoadClick()
     {
+        SceneManager.LoadScene("LoadMenu");
+    }
+
+    private void OptionsClick()
+    {
+        SceneManager.LoadScene("OptionsMenu");
     }  
 
 }
